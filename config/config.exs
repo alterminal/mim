@@ -18,6 +18,11 @@ config :mim, :matrix,
   federation_port: 8448,
   identity_server_base_url: nil
 
+config :mim, :oidc,
+  identity_providers: [
+    %{id: "oidc", name: "Continue"}
+  ]
+
 # Configures the endpoint
 config :mim, MimWeb.Endpoint,
   url: [host: "localhost"],

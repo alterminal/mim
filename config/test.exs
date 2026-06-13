@@ -39,6 +39,11 @@ config :mim, :matrix,
   federation_port: 8448,
   identity_server_base_url: nil
 
+config :mim, :oidc,
+  identity_providers: [
+    %{id: "oidc", name: "Continue with OIDC"}
+  ]
+
 config :mim, :well_known_req_options, plug: {Req.Test, Mim.WellKnown.HTTP}
 
 # Enable helpful, but potentially expensive runtime checks
