@@ -19,6 +19,11 @@ config :mim, :matrix,
   identity_server_base_url: nil
 
 config :mim, :oidc,
+  issuer: nil,
+  client_id: nil,
+  client_secret: nil,
+  scopes: ~w(openid profile email),
+  redirect_path: "/_matrix/client/v3/login/sso/callback",
   identity_providers: [
     %{id: "oidc", name: "Continue"}
   ]

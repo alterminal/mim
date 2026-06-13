@@ -86,3 +86,12 @@ config :phoenix_live_view,
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+config :mim, :oidc,
+  issuer: System.get_env("OIDC_ISSUER"),
+  client_id: System.get_env("OIDC_CLIENT_ID"),
+  client_secret: System.get_env("OIDC_CLIENT_SECRET"),
+  scopes: ~w(openid profile email),
+  identity_providers: [
+    %{id: "oidc", name: "Continue"}
+  ]

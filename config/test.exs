@@ -40,6 +40,11 @@ config :mim, :matrix,
   identity_server_base_url: nil
 
 config :mim, :oidc,
+  issuer: "https://idp.example.com",
+  client_id: "mim-test",
+  client_secret: "test-secret",
+  scopes: ~w(openid profile email),
+  redirect_uri: "http://localhost:4002/_matrix/client/v3/login/sso/callback",
   identity_providers: [
     %{id: "oidc", name: "Continue with OIDC"}
   ]

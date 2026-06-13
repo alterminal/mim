@@ -30,8 +30,7 @@ defmodule Mim.Login do
   end
 
   defp identity_providers do
-    oidc_config()
-    |> Keyword.get(:identity_providers, [])
+    Mim.Oidc.identity_providers()
     |> Enum.map(&identity_provider/1)
   end
 
@@ -46,9 +45,5 @@ defmodule Mim.Login do
       nil -> map
       value -> Map.put(map, json_key, value)
     end
-  end
-
-  defp oidc_config do
-    Application.get_env(:mim, :oidc, [])
   end
 end

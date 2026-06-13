@@ -116,4 +116,20 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Req
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+
+  config :mim, :oidc,
+    issuer: System.get_env("OIDC_ISSUER"),
+    client_id: System.get_env("OIDC_CLIENT_ID"),
+    client_secret: System.get_env("OIDC_CLIENT_SECRET"),
+    scopes:
+      (System.get_env("OIDC_SCOPES") || "openid profile email")
+      |> String.split(" ", trim: true),
+    redirect_uri: System.get_env("OIDC_REDIRECT_URI"),
+    discovery_url: System.get_env("OIDC_DISCOVERY_URL"),
+    identity_providers: [
+      %{
+        id: System.get_env("OIDC_IDP_ID") || "oidc",
+        name: System.get_env("OIDC_IDP_NAME") || "Continue"
+      }
+    ]
 end
