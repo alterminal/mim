@@ -38,6 +38,10 @@ defmodule MimWeb.Router do
 
     get "/v3/login", LoginController, :index
     options "/v3/login", LoginController, :index_options
+    get "/v3/auth_issuer", AuthIssuerController, :show
+    options "/v3/auth_issuer", AuthIssuerController, :show_options
+    get "/unstable/org.matrix.msc2965/auth_issuer", AuthIssuerController, :show
+    options "/unstable/org.matrix.msc2965/auth_issuer", AuthIssuerController, :show_options
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

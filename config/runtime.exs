@@ -118,18 +118,18 @@ if config_env() == :prod do
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 
   config :mim, :oidc,
-    issuer: System.get_env("OIDC_ISSUER"),
-    client_id: System.get_env("OIDC_CLIENT_ID"),
-    client_secret: System.get_env("OIDC_CLIENT_SECRET"),
+    issuer: "https://alterminal.com",
+    client_id: "Xbe9C_gVh-8-oR63SipSHZgBHRw4rSsK",
+    client_secret: "CP8LYCuzOSLuSZdD4jDrvfJTOzY78Ah5d6dF0Ob7ZMw",
     scopes:
       (System.get_env("OIDC_SCOPES") || "openid profile email")
       |> String.split(" ", trim: true),
-    redirect_uri: System.get_env("OIDC_REDIRECT_URI"),
-    discovery_url: System.get_env("OIDC_DISCOVERY_URL"),
+    redirect_uri: "http://localhost:4000/_matrix/client/v3/login/sso/callback",
+    discovery_url: "https://alterminal.com/.well-known/openid-configuration",
     identity_providers: [
       %{
         id: System.get_env("OIDC_IDP_ID") || "oidc",
-        name: System.get_env("OIDC_IDP_NAME") || "Continue"
+        name: System.get_env("OIDC_IDP_NAME") || "Alterminal"
       }
     ]
 end
