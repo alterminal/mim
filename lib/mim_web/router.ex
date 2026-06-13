@@ -14,16 +14,24 @@ defmodule MimWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :matrix_well_known do
+    plug :accepts, ["json"]
+    plug MimWeb.Plugs.MatrixCors
+  end
+
   scope "/", MimWeb do
     pipe_through :browser
 
     get "/", PageController, :home
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", MimWeb do
-  #   pipe_through :api
-  # end
+  scope "/", MimWeb do
+    pipe_through :matrix_well_known
+
+    get "/.well-known/matrix/client", WellKnownController, :client
+    options "/.well-known/matrix/client", WellKnownController, :client_options
+    get "/.well-known/matrix/server", WellKnownController, :server
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:mim, :dev_routes) do

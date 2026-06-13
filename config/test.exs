@@ -32,6 +32,15 @@ config :logger, level: :warning
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
 
+config :mim, :matrix,
+  server_name: "localhost",
+  client_base_url: "http://localhost:4002",
+  federation_server: "localhost",
+  federation_port: 8448,
+  identity_server_base_url: nil
+
+config :mim, :well_known_req_options, plug: {Req.Test, Mim.WellKnown.HTTP}
+
 # Enable helpful, but potentially expensive runtime checks
 config :phoenix_live_view,
   enable_expensive_runtime_checks: true

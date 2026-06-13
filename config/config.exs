@@ -11,6 +11,13 @@ config :mim,
   ecto_repos: [Mim.Repo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
+config :mim, :matrix,
+  server_name: "localhost",
+  client_base_url: nil,
+  federation_server: nil,
+  federation_port: 8448,
+  identity_server_base_url: nil
+
 # Configures the endpoint
 config :mim, MimWeb.Endpoint,
   url: [host: "localhost"],
