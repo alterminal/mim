@@ -7,10 +7,10 @@ defmodule Mim.Oidc.IntrospectionTest do
     Req.Test.stub(Mim.Oidc.HTTP, fn conn ->
       assert conn.request_path == "/oauth2/introspect"
 
-      assert {"authorization", "Basic " <> credentials} =
-               List.keyfind(conn.req_headers, "authorization", 0)
+      assert {"content-type", "application/x-www-form-urlencoded"} =
+               List.keyfind(conn.req_headers, "content-type", 0)
 
-      assert Base.decode64!(credentials) == "mim-test:test-secret"
+      assert conn.body_params == %{"client_id" => "mim-test", "token" => "oidc-access-token"}
 
       Req.Test.json(conn, %{
         "active" => true,

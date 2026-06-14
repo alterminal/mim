@@ -34,13 +34,16 @@ defmodule Mim.Oidc.Introspection do
   end
 
   defp post_introspection(endpoint, token) do
+    IO.inspect(Oidc.client_id())
     opts =
       req_options()
-      |> Keyword.merge(
-        form: [client_id: Oidc.client_id(), token: token]
-        # auth: {:basic, "#{Oidc.client_id()}:#{Oidc.client_secret() || ""}"}
+      |> Keyword.update(:headers, [], fn headers ->
+        [{"content-type", "application/x-www-form-urlencoded"} | headers]
+      end)
+      |> Keyword.put(
+        :body,
+        URI.encode_query(client_id: Oidc.client_id(), token: token)
       )
-    IO.inspect(opts)
     case HTTP.post(endpoint, opts) do
       {:ok, %{status: 200, body: body}} when is_map(body) ->
         {:ok, body}
