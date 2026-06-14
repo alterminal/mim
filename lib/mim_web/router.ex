@@ -41,6 +41,7 @@ defmodule MimWeb.Router do
     pipe_through :matrix_api
 
     get "/v3/login", LoginController, :index
+    post "/v3/login", LoginController, :create
     options "/v3/login", LoginController, :index_options
     get "/v3/auth_issuer", AuthIssuerController, :show
     options "/v3/auth_issuer", AuthIssuerController, :show_options

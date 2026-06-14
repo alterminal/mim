@@ -33,4 +33,52 @@ defmodule MimWeb.LoginControllerTest do
              "GET, POST, PUT, DELETE, OPTIONS"
            ]
   end
+
+  test "POST /_matrix/client/v3/login authenticates via OIDC token introspection", %{conn: conn} do
+    Req.Test.stub(Mim.Oidc.HTTP, fn plug_conn ->
+      Req.Test.json(plug_conn, %{
+        "active" => true,
+        "sub" => "controller-subject",
+        "iss" => "https://idp.example.com",
+        "username" => "bob"
+      })
+    end)
+
+    conn =
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post("/_matrix/client/v3/login", %{
+        "type" => "m.login.token",
+        "token" => "oidc-access-token",
+        "device_id" => "MYDEVICE01"
+      })
+
+    assert %{
+             "user_id" => "@bob:localhost",
+             "access_token" => access_token,
+             "device_id" => "MYDEVICE01",
+             "well_known" => %{
+               "m.homeserver" => %{"base_url" => "http://localhost:4002"}
+             }
+           } = json_response(conn, 200)
+
+    assert is_binary(access_token) and access_token != ""
+    assert get_resp_header(conn, "access-control-allow-origin") == ["*"]
+  end
+
+  test "POST /_matrix/client/v3/login returns 403 for inactive tokens", %{conn: conn} do
+    Req.Test.stub(Mim.Oidc.HTTP, fn plug_conn ->
+      Req.Test.json(plug_conn, %{"active" => false})
+    end)
+
+    conn =
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post("/_matrix/client/v3/login", %{
+        "type" => "m.login.token",
+        "token" => "bad-token"
+      })
+
+    assert %{"errcode" => "M_FORBIDDEN"} = json_response(conn, 403)
+  end
 end

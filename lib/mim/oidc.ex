@@ -14,6 +14,7 @@ defmodule Mim.Oidc do
     * `:redirect_uri` — full redirect URI override
     * `:redirect_path` — path appended to the homeserver base URL when `:redirect_uri` is unset
     * `:discovery_url` — OpenID Provider Metadata URL override
+    * `:introspection_endpoint` — token introspection URL override (RFC 7662)
     * `:identity_providers` — IdPs advertised in `GET /_matrix/client/v3/login`
   """
 
@@ -107,6 +108,12 @@ defmodule Mim.Oidc do
   def identity_providers do
     config(:identity_providers) || []
   end
+
+  @doc """
+  Returns the token introspection endpoint URL, if configured directly.
+  """
+  @spec introspection_endpoint() :: String.t() | nil
+  def introspection_endpoint, do: config(:introspection_endpoint)
 
   defp config(key) do
     Application.get_env(:mim, :oidc, []) |> Keyword.get(key)

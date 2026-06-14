@@ -45,11 +45,14 @@ config :mim, :oidc,
   client_secret: "test-secret",
   scopes: ~w(openid profile email),
   redirect_uri: "http://localhost:4002/_matrix/client/v3/login/sso/callback",
+  introspection_endpoint: "https://idp.example.com/oauth2/introspect",
   identity_providers: [
     %{id: "oidc", name: "Continue with OIDC"}
   ]
 
 config :mim, :well_known_req_options, plug: {Req.Test, Mim.WellKnown.HTTP}
+
+config :mim, :oidc_req_options, plug: {Req.Test, Mim.Oidc.HTTP}
 
 # Enable helpful, but potentially expensive runtime checks
 config :phoenix_live_view,

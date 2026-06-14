@@ -8,6 +8,9 @@ defmodule Mim.Accounts do
   alias Mim.Accounts.AccessToken
   alias Mim.Accounts.Account
   alias Mim.Repo
+  alias Mim.WellKnown
+
+  @localpart_regex ~r/^[a-z0-9._=\/-]+$/
 
   @doc """
   Creates an account with the given attributes.
@@ -52,6 +55,63 @@ defmodule Mim.Accounts do
       %AccessToken{} = access_token -> {:ok, access_token}
       nil -> {:error, :unknown_token}
     end
+  end
+
+  @doc """
+  Finds or creates an account from OIDC introspection claims.
+  """
+  @spec fetch_or_create_account_for_oidc(map()) ::
+          {:ok, Account.t()} | {:error, Ecto.Changeset.t() | :invalid_localpart}
+  def fetch_or_create_account_for_oidc(%{"sub" => oidc_sub, "iss" => oidc_issuer} = claims) do
+    case Repo.get_by(Account, oidc_sub: oidc_sub, oidc_issuer: oidc_issuer) do
+      %Account{} = account ->
+        {:ok, account}
+
+      nil ->
+        with {:ok, localpart} <- localpart_from_claims(claims),
+             {:ok, account} <-
+               create_account(%{
+                 mxid: mxid_for_localpart(localpart),
+                 oidc_sub: oidc_sub,
+                 oidc_issuer: oidc_issuer
+               }) do
+          {:ok, account}
+        end
+    end
+  end
+
+  defp localpart_from_claims(%{"sub" => _} = claims) do
+    localpart =
+      claims
+      |> Map.get("username")
+      |> case do
+        username when is_binary(username) and username != "" ->
+          sanitize_localpart(username)
+
+        _ ->
+          sanitize_localpart(Map.fetch!(claims, "sub"))
+      end
+
+    if Regex.match?(@localpart_regex, localpart) do
+      {:ok, localpart}
+    else
+      {:error, :invalid_localpart}
+    end
+  end
+
+  defp sanitize_localpart(value) do
+    value
+    |> String.downcase()
+    |> String.replace(~r/[^a-z0-9._=\/-]/, "_")
+    |> String.trim("_")
+    |> case do
+      "" -> "user"
+      localpart -> String.slice(localpart, 0, 255)
+    end
+  end
+
+  defp mxid_for_localpart(localpart) do
+    "@#{localpart}:#{WellKnown.server_name()}"
   end
 
   defp generate_token do

@@ -33,4 +33,8 @@ defmodule Mim.OidcTest do
   test "identity_providers/0 returns configured providers" do
     assert [%{id: "oidc", name: "Continue with OIDC"}] = Oidc.identity_providers()
   end
+
+  test "introspection_endpoint/0 returns configured endpoint" do
+    assert Oidc.introspection_endpoint() == "https://idp.example.com/oauth2/introspect"
+  end
 end

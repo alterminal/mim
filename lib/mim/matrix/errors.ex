@@ -17,4 +17,9 @@ defmodule Mim.Matrix.Errors do
   def forbidden(message \\ "You are not allowed to request tokens for this user") do
     %{"errcode" => "M_FORBIDDEN", "error" => message}
   end
+
+  @spec invalid_param(String.t()) :: map()
+  def invalid_param(message) do
+    %{"errcode" => "M_INVALID_PARAM", "error" => message}
+  end
 end
