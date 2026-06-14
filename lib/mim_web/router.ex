@@ -19,6 +19,10 @@ defmodule MimWeb.Router do
     plug MimWeb.Plugs.MatrixCors
   end
 
+  pipeline :matrix_authenticated do
+    plug MimWeb.Plugs.MatrixAuth
+  end
+
   scope "/", MimWeb do
     pipe_through :browser
 
@@ -42,6 +46,16 @@ defmodule MimWeb.Router do
     options "/v3/auth_issuer", AuthIssuerController, :show_options
     get "/unstable/org.matrix.msc2965/auth_issuer", AuthIssuerController, :show
     options "/unstable/org.matrix.msc2965/auth_issuer", AuthIssuerController, :show_options
+
+    options "/v1/user/:user_id/openid/request_token", OpenIdController, :request_token_options
+    options "/v3/user/:user_id/openid/request_token", OpenIdController, :request_token_options
+  end
+
+  scope "/_matrix/client", MimWeb do
+    pipe_through [:matrix_api, :matrix_authenticated]
+
+    post "/v1/user/:user_id/openid/request_token", OpenIdController, :request_token
+    post "/v3/user/:user_id/openid/request_token", OpenIdController, :request_token
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

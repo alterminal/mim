@@ -19,3 +19,7 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 * Docs: https://hexdocs.pm/phoenix
 * Forum: https://elixirforum.com/c/phoenix-forum
 * Source: https://github.com/phoenixframework/phoenix
+
+```
+https://alterminal.com/oauth/authorize?client_id=Xbe9C_gVh-8-oR63SipSHZgBHRw4rSsK&redirect_uri=http://localhost:4000&response_type=code&scope=openid&nonce=f2f23f&code_challenge_method=S256&code_challenge=ZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSAgLQo
+```
