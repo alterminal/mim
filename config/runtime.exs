@@ -120,7 +120,6 @@ if config_env() == :prod do
   config :mim, :oidc,
     issuer: "https://alterminal.com",
     client_id: "Xbe9C_gVh-8-oR63SipSHZgBHRw4rSsK",
-    client_secret: "CP8LYCuzOSLuSZdD4jDrvfJTOzY78Ah5d6dF0Ob7ZMw",
     scopes:
       (System.get_env("OIDC_SCOPES") || "openid profile email")
       |> String.split(" ", trim: true),
