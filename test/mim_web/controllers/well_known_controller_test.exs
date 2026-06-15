@@ -7,7 +7,8 @@ defmodule MimWeb.WellKnownControllerTest do
     conn = get(conn, "/.well-known/matrix/client")
 
     assert %{
-             "m.homeserver" => %{"base_url" => "http://localhost:4002"}
+             "m.homeserver" => %{"base_url" => "http://localhost:4002"},
+             "m.authentication" => %{"issuer" => "https://idp.example.com"}
            } = json_response(conn, 200)
 
     assert get_resp_header(conn, "access-control-allow-origin") == ["*"]

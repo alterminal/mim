@@ -10,6 +10,7 @@ defmodule Mim.WellKnown do
   def client_discovery do
     %{"m.homeserver" => %{"base_url" => client_base_url()}}
     |> maybe_put_identity_server()
+    |> maybe_put_authentication()
   end
 
   @doc """
@@ -53,6 +54,14 @@ defmodule Mim.WellKnown do
     case matrix_config(:identity_server_base_url) do
       nil -> response
       url -> Map.put(response, "m.identity_server", %{"base_url" => url})
+    end
+  end
+
+  defp maybe_put_authentication(response) do
+    if Mim.Oidc.configured?() do
+      Map.put(response, "m.authentication", %{"issuer" => Mim.Oidc.issuer()})
+    else
+      response
     end
   end
 
