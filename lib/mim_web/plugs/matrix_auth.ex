@@ -25,7 +25,9 @@ defmodule MimWeb.Plugs.MatrixAuth do
       token ->
         case Accounts.fetch_access_token(token) do
           {:ok, access_token} ->
-            assign(conn, :current_account, access_token.account)
+            conn
+            |> assign(:current_account, access_token.account)
+            |> assign(:current_access_token, access_token)
 
           {:error, :unknown_token} ->
             conn

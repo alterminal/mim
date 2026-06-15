@@ -35,6 +35,7 @@ defmodule Mim.Oidc.Introspection do
 
   defp post_introspection(endpoint, token) do
     IO.inspect(Oidc.client_id())
+
     opts =
       req_options()
       |> Keyword.update(:headers, [], fn headers ->
@@ -44,6 +45,7 @@ defmodule Mim.Oidc.Introspection do
         :body,
         URI.encode_query(client_id: Oidc.client_id(), token: token)
       )
+
     case HTTP.post(endpoint, opts) do
       {:ok, %{status: 200, body: body}} when is_map(body) ->
         {:ok, body}

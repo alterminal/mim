@@ -58,6 +58,27 @@ defmodule Mim.Accounts do
   end
 
   @doc """
+  Revokes a single access token.
+  """
+  @spec revoke_access_token(AccessToken.t()) :: :ok
+  def revoke_access_token(%AccessToken{} = access_token) do
+    Repo.delete!(access_token)
+    :ok
+  end
+
+  @doc """
+  Revokes all access tokens for the given account.
+  """
+  @spec revoke_all_access_tokens(Account.t()) :: :ok
+  def revoke_all_access_tokens(%Account{} = account) do
+    AccessToken
+    |> where([t], t.account_id == ^account.id)
+    |> Repo.delete_all()
+
+    :ok
+  end
+
+  @doc """
   Finds or creates an account from OIDC introspection claims.
   """
   @spec fetch_or_create_account_for_oidc(map()) ::
