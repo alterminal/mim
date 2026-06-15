@@ -53,11 +53,13 @@ defmodule MimWeb.Router do
     options "/v3/account/whoami", AccountController, :whoami_options
     options "/v3/logout", LogoutController, :logout_options
     options "/v3/logout/all", LogoutController, :logout_all_options
+    options "/v3/createRoom", RoomController, :create_options
   end
 
   scope "/_matrix/client", MimWeb do
     pipe_through [:matrix_api, :matrix_authenticated]
 
+    post "/v3/createRoom", RoomController, :create
     get "/v3/account/whoami", AccountController, :whoami
     post "/v3/logout", LogoutController, :logout
     post "/v3/logout/all", LogoutController, :logout_all

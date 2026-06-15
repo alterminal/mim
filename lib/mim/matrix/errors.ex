@@ -22,4 +22,13 @@ defmodule Mim.Matrix.Errors do
   def invalid_param(message) do
     %{"errcode" => "M_INVALID_PARAM", "error" => message}
   end
+
+  @spec unsupported_room_version(String.t()) :: map()
+  def unsupported_room_version(version) do
+    %{
+      "errcode" => "M_UNSUPPORTED_ROOM_VERSION",
+      "error" => "This server does not support that room version",
+      "room_version" => version
+    }
+  end
 end
