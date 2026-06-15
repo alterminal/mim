@@ -51,7 +51,7 @@ if config_env() == :prod do
       """
 
   host = System.get_env("PHX_HOST") || "example.com"
-  port = String.to_integer(System.get_env("PORT") || "4000")
+  port = String.to_integer(System.get_env("PORT") || "5000")
 
   config :mim, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
@@ -123,7 +123,7 @@ if config_env() == :prod do
     scopes:
       (System.get_env("OIDC_SCOPES") || "openid profile email")
       |> String.split(" ", trim: true),
-    redirect_uri: "http://localhost:4000/_matrix/client/v3/login/sso/callback",
+    redirect_uri: "http://localhost:5000/_matrix/client/v3/login/sso/callback",
     discovery_url: "https://alterminal.com/.well-known/openid-configuration",
     identity_providers: [
       %{

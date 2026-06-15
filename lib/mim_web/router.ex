@@ -40,6 +40,8 @@ defmodule MimWeb.Router do
   scope "/_matrix/client", MimWeb do
     pipe_through :matrix_api
 
+    get "/versions", VersionsController, :index
+    options "/versions", VersionsController, :index_options
     get "/v3/login", LoginController, :index
     post "/v3/login", LoginController, :create
     options "/v3/login", LoginController, :index_options
