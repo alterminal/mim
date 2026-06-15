@@ -88,9 +88,8 @@ config :phoenix_live_view,
 config :swoosh, :api_client, false
 
 config :mim, :oidc,
-  issuer: System.get_env("OIDC_ISSUER"),
-  client_id: System.get_env("OIDC_CLIENT_ID"),
-  client_secret: System.get_env("OIDC_CLIENT_SECRET"),
+  issuer: "https://alterminal.com",
+  client_id: "Xbe9C_gVh-8-oR63SipSHZgBHRw4rSsK",
   scopes: ~w(openid profile email),
   identity_providers: [
     %{id: "oidc", name: "Continue"}
