@@ -79,6 +79,17 @@ defmodule Mim.Accounts do
   end
 
   @doc """
+  Looks up an account by Matrix ID.
+  """
+  @spec fetch_account_by_mxid(String.t()) :: {:ok, Account.t()} | {:error, :not_found}
+  def fetch_account_by_mxid(mxid) when is_binary(mxid) do
+    case Repo.get_by(Account, mxid: mxid) do
+      %Account{} = account -> {:ok, account}
+      nil -> {:error, :not_found}
+    end
+  end
+
+  @doc """
   Finds or creates an account from OIDC introspection claims.
   """
   @spec fetch_or_create_account_for_oidc(map()) ::

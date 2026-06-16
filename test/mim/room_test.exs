@@ -62,4 +62,78 @@ defmodule Mim.RoomTest do
     assert {:error, :unsupported_room_version, "11"} =
              Room.create(account, %{"room_version" => "11"})
   end
+
+  test "create/2 adds creator as a joined member", %{account: account} do
+    assert {:ok, %{"room_id" => room_id}} = Room.create(account, %{})
+    assert {:ok, room} = Mim.Rooms.fetch_room_by_room_id(room_id)
+    assert Mim.Rooms.joined_member?(room, account)
+  end
+
+  test "invite/3 invites a local user to a room", %{account: account} do
+    {:ok, invitee} =
+      Accounts.create_account(%{
+        mxid: "@bob:localhost",
+        oidc_sub: "sub-bob",
+        oidc_issuer: "https://idp.example.com"
+      })
+
+    assert {:ok, %{"room_id" => room_id}} = Room.create(account, %{})
+    assert {:ok, %{}} = Room.invite(account, room_id, %{"user_id" => invitee.mxid})
+
+    assert {:ok, room} = Mim.Rooms.fetch_room_by_room_id(room_id)
+
+    assert {:ok, %Mim.Rooms.Membership{membership: :invite}} =
+             Mim.Rooms.fetch_membership(room, invitee)
+  end
+
+  test "invite/3 rejects missing user_id", %{account: account} do
+    assert {:ok, %{"room_id" => room_id}} = Room.create(account, %{})
+    assert {:error, %{"errcode" => "M_INVALID_PARAM"}} = Room.invite(account, room_id, %{})
+  end
+
+  test "invite/3 rejects unknown room", %{account: account} do
+    assert {:error, :not_found} =
+             Room.invite(account, "!missing:localhost", %{"user_id" => account.mxid})
+  end
+
+  test "invite/3 rejects remote users", %{account: account} do
+    assert {:ok, %{"room_id" => room_id}} = Room.create(account, %{})
+
+    assert {:error, %{"errcode" => "M_INVALID_PARAM", "error" => message}} =
+             Room.invite(account, room_id, %{"user_id" => "@remote:other.server"})
+
+    assert message =~ "homeserver"
+  end
+
+  test "join/2 joins a public room", %{account: account} do
+    {:ok, joiner} =
+      Accounts.create_account(%{
+        mxid: "@joiner:localhost",
+        oidc_sub: "sub-joiner",
+        oidc_issuer: "https://idp.example.com"
+      })
+
+    assert {:ok, %{"room_id" => room_id}} =
+             Room.create(account, %{"visibility" => "public"})
+
+    assert {:ok, %{"room_id" => ^room_id}} = Room.join(joiner, room_id)
+  end
+
+  test "join/2 requires an invite for private rooms", %{account: account} do
+    {:ok, invitee} =
+      Accounts.create_account(%{
+        mxid: "@guest:localhost",
+        oidc_sub: "sub-guest",
+        oidc_issuer: "https://idp.example.com"
+      })
+
+    assert {:ok, %{"room_id" => room_id}} = Room.create(account, %{"visibility" => "private"})
+    assert {:error, :forbidden} = Room.join(invitee, room_id)
+    assert {:ok, %{}} = Room.invite(account, room_id, %{"user_id" => invitee.mxid})
+    assert {:ok, %{"room_id" => ^room_id}} = Room.join(invitee, room_id)
+  end
+
+  test "join/2 rejects unknown room", %{account: account} do
+    assert {:error, :not_found} = Room.join(account, "!missing:localhost")
+  end
 end

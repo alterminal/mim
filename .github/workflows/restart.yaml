@@ -1,0 +1,21 @@
+name: Restart
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute remote commands via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          password: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            mim/_build/prod/rel/mim/bin/mim stop
+            mim/_build/prod/rel/mim/bin/migrate
+            mim/_build/prod/rel/mim/bin/mim daemon
+# ps aux | grep -E "(my_app|beam.smp)" | grep -v grep

@@ -23,6 +23,11 @@ defmodule Mim.Matrix.Errors do
     %{"errcode" => "M_INVALID_PARAM", "error" => message}
   end
 
+  @spec not_found(String.t()) :: map()
+  def not_found(message \\ "Not found") do
+    %{"errcode" => "M_NOT_FOUND", "error" => message}
+  end
+
   @spec unsupported_room_version(String.t()) :: map()
   def unsupported_room_version(version) do
     %{

@@ -19,6 +19,7 @@ defmodule Mim.Rooms.Room do
     field :room_version, :string, default: @default_room_version
 
     belongs_to :creator, Mim.Accounts.Account
+    has_many :memberships, Mim.Rooms.Membership
 
     timestamps(type: :utc_datetime)
   end
