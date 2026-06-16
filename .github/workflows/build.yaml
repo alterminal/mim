@@ -1,0 +1,37 @@
+name: Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.19.5" # Specify version
+          otp-version: "28.0" # Specify version
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+      - name: Install dependencies
+        run: mix deps.get
+      - name: Compile
+        run: MIX_ENV=prod mix compile
+      - name: Compile assets
+        run: MIX_ENV=prod mix assets.deploy
+      - name: phx.gen.release
+        run: mix phx.gen.release
+      - name: Build
+        run: MIX_ENV=prod mix release
+      - name: Copy files via SCP
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          password: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          source: "_build/prod/rel/mim/*"
+          target: "~/mim"
