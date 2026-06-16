@@ -22,7 +22,7 @@ end
 
 if config_env() == :prod do
   database_url =
-    System.get_env("DATABASE_URL") ||
+    System.get_env("MIM_DATABASE_URL") ||
       raise """
       environment variable DATABASE_URL is missing.
       For example: ecto://USER:PASS@HOST/DATABASE
@@ -50,8 +50,8 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
-  host = System.get_env("PHX_HOST") || "example.com"
-  port = String.to_integer(System.get_env("PORT") || "5000")
+  host = System.get_env("MIM_HOST") || "matrix.alterminal.com"
+  port = String.to_integer(System.get_env("MIM_PORT") || "4001")
 
   config :mim, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
@@ -119,11 +119,11 @@ if config_env() == :prod do
 
   config :mim, :oidc,
     issuer: "https://alterminal.com",
-    client_id: "Xbe9C_gVh-8-oR63SipSHZgBHRw4rSsK",
+    client_id: System.get_env("MIM_OIDC_CLIENT_ID"),
     scopes:
       (System.get_env("OIDC_SCOPES") || "openid profile email")
       |> String.split(" ", trim: true),
-    redirect_uri: "http://localhost:5000/_matrix/client/v3/login/sso/callback",
+    redirect_uri: System.get_env("MIM_OIDC_REDIRECT_URI"),
     discovery_url: "https://alterminal.com/.well-known/openid-configuration",
     identity_providers: [
       %{
