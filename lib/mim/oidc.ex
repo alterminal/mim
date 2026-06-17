@@ -15,7 +15,9 @@ defmodule Mim.Oidc do
     * `:redirect_path` — path appended to the homeserver base URL when `:redirect_uri` is unset
     * `:discovery_url` — OpenID Provider Metadata URL override
     * `:introspection_endpoint` — token introspection URL override (RFC 7662)
+    * `:authorization_endpoint` — authorization URL override
     * `:identity_providers` — IdPs advertised in `GET /_matrix/client/v3/login`
+    * `:account_management_url` — account management URL for `.well-known/matrix/client`
   """
 
   @default_redirect_path "/_matrix/client/v3/login/sso/callback"
@@ -114,6 +116,18 @@ defmodule Mim.Oidc do
   """
   @spec introspection_endpoint() :: String.t() | nil
   def introspection_endpoint, do: config(:introspection_endpoint)
+
+  @doc """
+  Returns the authorization endpoint URL, if configured directly.
+  """
+  @spec authorization_endpoint() :: String.t() | nil
+  def authorization_endpoint, do: config(:authorization_endpoint)
+
+  @doc """
+  Returns the account management URL advertised in client discovery.
+  """
+  @spec account_management_url() :: String.t() | nil
+  def account_management_url, do: config(:account_management_url)
 
   defp config(key) do
     Application.get_env(:mim, :oidc, []) |> Keyword.get(key)

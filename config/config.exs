@@ -13,6 +13,8 @@ config :mim,
 
 config :mim, :matrix,
   server_name: "localhost",
+  # Public client-server API base URL for .well-known and OIDC redirects.
+  # Override via MIM_CLIENT_BASE_URL at runtime or set explicitly per environment.
   client_base_url: nil,
   federation_server: nil,
   federation_port: 8448,

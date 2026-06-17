@@ -19,6 +19,12 @@ defmodule MimWeb.Router do
     plug MimWeb.Plugs.MatrixCors
   end
 
+  pipeline :matrix_sso do
+    plug :accepts, ["html", "json"]
+    plug :fetch_session
+    plug MimWeb.Plugs.MatrixCors
+  end
+
   pipeline :matrix_authenticated do
     plug MimWeb.Plugs.MatrixAuth
   end
@@ -58,6 +64,15 @@ defmodule MimWeb.Router do
     options "/v3/createRoom", RoomController, :create_options
     options "/v3/rooms/:room_id/invite", RoomController, :invite_options
     options "/v3/join/:room_id", RoomController, :join_options
+  end
+
+  scope "/_matrix/client", MimWeb do
+    pipe_through :matrix_sso
+
+    get "/v3/login/sso/redirect", LoginController, :sso_redirect
+    get "/v3/login/sso/redirect/:idp_id", LoginController, :sso_redirect_idp
+    options "/v3/login/sso/redirect", LoginController, :sso_redirect_options
+    options "/v3/login/sso/redirect/:idp_id", LoginController, :sso_redirect_options
   end
 
   scope "/_matrix/client", MimWeb do

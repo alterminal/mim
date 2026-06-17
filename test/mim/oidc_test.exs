@@ -37,4 +37,8 @@ defmodule Mim.OidcTest do
   test "introspection_endpoint/0 returns configured endpoint" do
     assert Oidc.introspection_endpoint() == "https://idp.example.com/oauth2/introspect"
   end
+
+  test "authorization_endpoint/0 returns configured endpoint" do
+    assert Oidc.authorization_endpoint() == "https://idp.example.com/oauth2/authorize"
+  end
 end

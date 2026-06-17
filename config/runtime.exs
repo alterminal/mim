@@ -20,6 +20,10 @@ if System.get_env("PHX_SERVER") do
   config :mim, MimWeb.Endpoint, server: true
 end
 
+if client_base_url = System.get_env("MIM_CLIENT_BASE_URL") do
+  config :mim, :matrix, client_base_url: client_base_url
+end
+
 if config_env() == :prod do
   database_url =
     System.get_env("MIM_DATABASE_URL") ||

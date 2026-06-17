@@ -1,6 +1,10 @@
 defmodule Mim.WellKnown do
   @moduledoc """
   Builds Matrix `.well-known` discovery responses for this homeserver.
+
+  The homeserver `base_url` is read from `:mim, :matrix, :client_base_url`.
+  When unset, it falls back to the Phoenix endpoint URL. In production, set
+  the `MIM_CLIENT_BASE_URL` environment variable to override it.
   """
 
   @doc """
@@ -59,9 +63,21 @@ defmodule Mim.WellKnown do
 
   defp maybe_put_authentication(response) do
     if Mim.Oidc.configured?() do
-      Map.put(response, "m.authentication", %{"issuer" => Mim.Oidc.issuer()})
+      Map.put(response, "org.matrix.msc2965.authentication", authentication())
     else
       response
+    end
+  end
+
+  defp authentication do
+    %{"issuer" => Mim.Oidc.issuer()}
+    |> maybe_put_account_management_url()
+  end
+
+  defp maybe_put_account_management_url(authentication) do
+    case Mim.Oidc.account_management_url() do
+      nil -> authentication
+      url -> Map.put(authentication, "account", url)
     end
   end
 

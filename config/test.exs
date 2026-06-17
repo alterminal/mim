@@ -46,6 +46,7 @@ config :mim, :oidc,
   scopes: ~w(openid profile email),
   redirect_uri: "http://localhost:4002/_matrix/client/v3/login/sso/callback",
   introspection_endpoint: "https://idp.example.com/oauth2/introspect",
+  authorization_endpoint: "https://idp.example.com/oauth2/authorize",
   identity_providers: [
     %{id: "oidc", name: "Continue with OIDC"}
   ]
