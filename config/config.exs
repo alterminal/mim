@@ -20,6 +20,10 @@ config :mim, :matrix,
   federation_port: 8448,
   identity_server_base_url: nil
 
+config :mim, :identity,
+  lookup_pepper: nil,
+  algorithms: ["sha256", "none"]
+
 config :mim, :oidc,
   issuer: nil,
   client_id: nil,

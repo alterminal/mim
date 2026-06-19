@@ -8,6 +8,7 @@ defmodule MimWeb.WellKnownControllerTest do
 
     assert %{
              "m.homeserver" => %{"base_url" => "http://localhost:4002"},
+             "m.identity_server" => %{"base_url" => "http://localhost:4002"},
              "org.matrix.msc2965.authentication" => %{"issuer" => "https://idp.example.com"}
            } = json_response(conn, 200)
 

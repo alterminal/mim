@@ -24,6 +24,14 @@ if client_base_url = System.get_env("MIM_CLIENT_BASE_URL") do
   config :mim, :matrix, client_base_url: client_base_url
 end
 
+if identity_server_base_url = System.get_env("MIM_IDENTITY_SERVER_BASE_URL") do
+  config :mim, :matrix, identity_server_base_url: identity_server_base_url
+end
+
+if lookup_pepper = System.get_env("MIM_IDENTITY_LOOKUP_PEPPER") do
+  config :mim, :identity, lookup_pepper: lookup_pepper
+end
+
 if config_env() == :prod do
   database_url =
     System.get_env("MIM_DATABASE_URL") ||
@@ -120,6 +128,11 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Req
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+
+  config :mim, :identity,
+    lookup_pepper:
+      System.get_env("MIM_IDENTITY_LOOKUP_PEPPER") ||
+        raise("environment variable MIM_IDENTITY_LOOKUP_PEPPER is missing")
 
   config :mim, :oidc,
     issuer: "https://alterminal.com",

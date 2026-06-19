@@ -39,6 +39,10 @@ config :mim, :matrix,
   federation_port: 8448,
   identity_server_base_url: nil
 
+config :mim, :identity,
+  lookup_pepper: "test-pepper",
+  algorithms: ["sha256", "none"]
+
 config :mim, :oidc,
   issuer: "https://idp.example.com",
   client_id: "mim-test",

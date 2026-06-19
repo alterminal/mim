@@ -29,6 +29,10 @@ defmodule MimWeb.Router do
     plug MimWeb.Plugs.MatrixAuth
   end
 
+  pipeline :identity_authenticated do
+    plug MimWeb.Plugs.IdentityAuth
+  end
+
   scope "/", MimWeb do
     pipe_through :browser
 
@@ -73,6 +77,18 @@ defmodule MimWeb.Router do
     get "/v3/login/sso/redirect/:idp_id", LoginController, :sso_redirect_idp
     options "/v3/login/sso/redirect", LoginController, :sso_redirect_options
     options "/v3/login/sso/redirect/:idp_id", LoginController, :sso_redirect_options
+  end
+
+  scope "/_matrix/identity", MimWeb.Identity do
+    pipe_through :matrix_api
+
+    options "/v2/hash_details", HashDetailsController, :show_options
+  end
+
+  scope "/_matrix/identity", MimWeb.Identity do
+    pipe_through [:matrix_api, :identity_authenticated]
+
+    get "/v2/hash_details", HashDetailsController, :show
   end
 
   scope "/_matrix/client", MimWeb do

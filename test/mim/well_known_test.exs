@@ -24,13 +24,16 @@ defmodule Mim.WellKnownTest do
       Keyword.put(original, :client_base_url, "https://matrix.example.com")
     )
 
-    assert %{"m.homeserver" => %{"base_url" => "https://matrix.example.com"}} =
-             WellKnown.client_discovery()
+    assert %{
+             "m.homeserver" => %{"base_url" => "https://matrix.example.com"},
+             "m.identity_server" => %{"base_url" => "https://matrix.example.com"}
+           } = WellKnown.client_discovery()
   end
 
   test "client_discovery/0 returns homeserver base URL and MSC2965 authentication" do
     assert %{
              "m.homeserver" => %{"base_url" => "http://localhost:4002"},
+             "m.identity_server" => %{"base_url" => "http://localhost:4002"},
              "org.matrix.msc2965.authentication" => %{"issuer" => "https://idp.example.com"}
            } = WellKnown.client_discovery()
   end
@@ -56,8 +59,27 @@ defmodule Mim.WellKnownTest do
     original = Application.get_env(:mim, :oidc, [])
     Application.put_env(:mim, :oidc, Keyword.merge(original, issuer: nil, client_id: nil))
 
-    assert %{"m.homeserver" => %{"base_url" => "http://localhost:4002"}} =
-             WellKnown.client_discovery()
+    assert %{
+             "m.homeserver" => %{"base_url" => "http://localhost:4002"},
+             "m.identity_server" => %{"base_url" => "http://localhost:4002"}
+           } = WellKnown.client_discovery()
+  end
+
+  test "client_discovery/0 uses configured identity_server_base_url" do
+    original = Application.get_env(:mim, :matrix, [])
+
+    Application.put_env(
+      :mim,
+      :matrix,
+      original
+      |> Keyword.put(:client_base_url, "https://matrix.example.com")
+      |> Keyword.put(:identity_server_base_url, "https://identity.example.com")
+    )
+
+    assert %{
+             "m.homeserver" => %{"base_url" => "https://matrix.example.com"},
+             "m.identity_server" => %{"base_url" => "https://identity.example.com"}
+           } = WellKnown.client_discovery()
   end
 
   test "server_discovery/0 returns federation delegate" do

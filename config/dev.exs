@@ -94,3 +94,7 @@ config :mim, :oidc,
   identity_providers: [
     %{id: "oidc", name: "Continue"}
   ]
+
+config :mim, :identity,
+  lookup_pepper: "dev-pepper",
+  algorithms: ["sha256", "none"]

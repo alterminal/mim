@@ -45,6 +45,17 @@ defmodule Mim.WellKnown do
   end
 
   @doc """
+  Returns the identity server API base URL.
+
+  Falls back to `client_base_url/0` when `:identity_server_base_url` is unset,
+  since this application serves the Matrix identity API on the same host.
+  """
+  @spec identity_server_base_url() :: String.t()
+  def identity_server_base_url do
+    client_base_url()
+  end
+
+  @doc """
   Returns the federation delegate string (`host` or `host:port`).
   """
   @spec federation_delegate() :: String.t()
@@ -55,10 +66,7 @@ defmodule Mim.WellKnown do
   end
 
   defp maybe_put_identity_server(response) do
-    case matrix_config(:identity_server_base_url) do
-      nil -> response
-      url -> Map.put(response, "m.identity_server", %{"base_url" => url})
-    end
+    Map.put(response, "m.identity_server", %{"base_url" => identity_server_base_url()})
   end
 
   defp maybe_put_authentication(response) do
